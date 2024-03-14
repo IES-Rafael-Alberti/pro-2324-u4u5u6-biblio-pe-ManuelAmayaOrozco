@@ -12,27 +12,13 @@ open class Revista(titulo: String,
                  private val tematica: String,
                  estado: EstadoLibro = EstadoLibro.DISPONIBLE): ElementoBiblioteca(titulo, estado),Prestable {
 
-    private var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
+    override var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
 
     /**
      * Función que actualiza el ID de la revista, usado cuando es agregado al sistema biblioteca.
      */
     fun actualizarID(newID: Int) {
         id = newID
-    }
-
-    /**
-     * Función que devuelve el ID actual de la revista.
-     */
-    fun obtenerID(): Int {
-        return id
-    }
-
-    /**
-     * Función que devuelve el título de la revista.
-     */
-    fun obtenerTitulo(): String {
-        return titulo
     }
 
     /**

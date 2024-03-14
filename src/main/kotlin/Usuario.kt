@@ -26,11 +26,11 @@ class Usuario(private val nombre: String) {
         return nombre
     }
 
-    fun agregarLibroPrestado(libro: Libro) {
+    fun agregarLibroPrestado(libro: ElementoBiblioteca) {
         librosPrestados.add(libro)
     }
 
-    fun devolverLibroPrestado(libro: Libro) {
+    fun devolverLibroPrestado(libro: ElementoBiblioteca) {
         librosPrestados.remove(libro)
     }
 

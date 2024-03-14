@@ -55,7 +55,7 @@ class MenuBiblioteca {
 
                     println("Introduce el ID del libro que deseas tomar prestado.")
 
-                    var libEnc: Libro?
+                    var libEnc: ElementoBiblioteca?
 
                     do {
                         var encontrar = false
@@ -92,7 +92,7 @@ class MenuBiblioteca {
 
                     println("Introduce el ID del libro que deseas devolver.")
 
-                    var libEnc: Libro?
+                    var libEnc: ElementoBiblioteca?
 
                     do {
                         var encontrar = false
@@ -113,7 +113,7 @@ class MenuBiblioteca {
                 5 -> {
                     println("Introduce el ID del libro que deseas verificar.")
 
-                    var libEnc: Libro?
+                    var libEnc: ElementoBiblioteca?
 
                     do {
                         var encontrar = false
@@ -127,7 +127,7 @@ class MenuBiblioteca {
                         }
                     } while(!encontrar)
 
-                    val res = gestorBiblioteca.libroDisponible(libEnc!!)
+                    val res = gestorBiblioteca.elementoDisponible(libEnc!!)
                     if (res) {
                         println("El libro está disponible.")
                     }
@@ -143,7 +143,7 @@ class MenuBiblioteca {
                 8 -> {
                     println("Introduce el ID del libro que deseas mirar el historial.")
 
-                    var libEnc: Libro?
+                    var libEnc: ElementoBiblioteca?
 
                     do {
                         var encontrar = false

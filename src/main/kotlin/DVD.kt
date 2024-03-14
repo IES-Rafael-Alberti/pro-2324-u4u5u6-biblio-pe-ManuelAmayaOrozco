@@ -12,27 +12,13 @@ open class DVD(titulo: String,
                    private val estilo: String,
                    estado: EstadoLibro = EstadoLibro.DISPONIBLE): ElementoBiblioteca(titulo, estado),Prestable {
 
-    private var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
+    override var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
 
     /**
      * Función que actualiza el ID del DVD, usado cuando es agregado al sistema biblioteca.
      */
     fun actualizarID(newID: Int) {
         id = newID
-    }
-
-    /**
-     * Función que devuelve el ID actual del DVD.
-     */
-    fun obtenerID(): Int {
-        return id
-    }
-
-    /**
-     * Función que devuelve el título del DVD.
-     */
-    fun obtenerTitulo(): String {
-        return titulo
     }
 
     /**

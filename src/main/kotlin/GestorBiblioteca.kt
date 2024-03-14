@@ -7,7 +7,7 @@ class GestorBiblioteca() {
         const val NUMERO_ANIO_MAXIMO = 2024 //El año actual permitido al crear libros.
     }
 
-    val catalogo = mutableListOf<Libro>() //Catálogo de todos los libros.
+    val catalogo = mutableListOf<ElementoBiblioteca>() //Catálogo de todos los libros.
 
     val usuarios = mutableListOf<Usuario>() //Lista de todos los usuarios de la biblioteca.
 
@@ -84,13 +84,13 @@ class GestorBiblioteca() {
      *
      * @param libro El libro que será eliminado del catálogo.
      */
-    fun eliminarLibro(libro: Libro) {
-        val result = catalogo.remove(libro)
+    fun eliminarElemento(elemento: ElementoBiblioteca) {
+        val result = catalogo.remove(elemento)
         if (result) {
-            println("Libro ${libro.obtenerTitulo()} eliminado del catálogo.")
+            println("Libro ${elemento.obtenerTitulo()} eliminado del catálogo.")
         }
         else {
-            println("Libro ${libro.obtenerTitulo()} no encontrado en el catálogo.")
+            println("Libro ${elemento.obtenerTitulo()} no encontrado en el catálogo.")
         }
     }
 
@@ -99,7 +99,7 @@ class GestorBiblioteca() {
      *
      * @param libro El libro que será examinado.
      */
-    fun libroDisponible(elemento: ElementoBiblioteca): Boolean {
+    fun elementoDisponible(elemento: ElementoBiblioteca): Boolean {
         return elemento in catalogo && elemento.obtenerEstado() == EstadoLibro.DISPONIBLE
     }
 
@@ -183,17 +183,20 @@ class GestorBiblioteca() {
          * @param libro El libro que será prestado.
          */
         override fun prestarLibro(usuario: Usuario, elemento: ElementoBiblioteca) {
-            if (libroDisponible(elemento)) {
+            if (elementoDisponible(elemento)) {
                 val pos = catalogo.indexOf(elemento)
-                catalogo[pos].prestar()
-                println("El Libro ${libro.obtenerTitulo()} ha sido prestado con éxito.")
-                registroPrestamosLibros[libro]?.add("$numPrestamos ${libro.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")
-                usuario.actualizarNumPrestados()
-                registroPrestamosUsuarios[usuario]?.add("${usuario.obtenerNumPrestados()} ${libro.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")//Se añade al registro.
-                numPrestamos++ //Sube el número para el préstamo siguiente
+                if (catalogo[pos] is Prestable) {
+                    catalogo[pos].prestar()
+                    println("El Libro ${elemento.obtenerTitulo()} ha sido prestado con éxito.")
+                    registroPrestamosLibros[elemento]?.add("$numPrestamos ${elemento.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")
+                    usuario.actualizarNumPrestados()
+                    registroPrestamosUsuarios[usuario]?.add("${usuario.obtenerNumPrestados()} ${elemento.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")//Se añade al registro.
+                    numPrestamos++ //Sube el número para el préstamo siguiente
+                }
+
             }
             else {
-                println("El libro ${libro.obtenerTitulo()} no se encuentra disponible.")
+                println("El libro ${elemento.obtenerTitulo()} no se encuentra disponible.")
             }
         }
 
@@ -202,19 +205,19 @@ class GestorBiblioteca() {
          *
          * @param libro El libro que será devuelto.
          */
-        override fun devolverLibro(libro: Libro) {
-            if (!libroDisponible(libro)) {
-                val pos = catalogo.indexOf(libro)
-                catalogo[pos].actualizarEstado(EstadoLibro.DISPONIBLE)
-                println("El Libro ${libro.obtenerTitulo()} ha sido devuelto con éxito.")
+        override fun devolverLibro(elemento: ElementoBiblioteca) {
+            if (!elementoDisponible(elemento)) {
+                val pos = catalogo.indexOf(elemento)
+                catalogo[pos].devolver()
+                println("El Libro ${elemento.obtenerTitulo()} ha sido devuelto con éxito.")
             }
             else {
-                println("El libro ${libro.obtenerTitulo()} ya se encuentra disponible.")
+                println("El libro ${elemento.obtenerTitulo()} ya se encuentra disponible.")
             }
         }
 
-        override fun consultarHistorial(libro: Libro) {
-            val historial = registroPrestamosLibros[libro]
+        override fun consultarHistorial(elemento: ElementoBiblioteca) {
+            val historial = registroPrestamosLibros[elemento]
             if (historial != null) {
                 for (reg in historial) {
                     println(reg)

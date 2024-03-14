@@ -14,27 +14,13 @@ open class Libro(titulo: String,
                  private val tematica: String,
                  estado: EstadoLibro = EstadoLibro.DISPONIBLE): ElementoBiblioteca(titulo, estado),Prestable {
 
-    private var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
+    override var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
 
     /**
      * Función que actualiza el ID del Libro, usado cuando es agregado al sistema biblioteca.
      */
     fun actualizarID(newID: Int) {
         id = newID
-    }
-
-    /**
-     * Función que devuelve el ID actual del libro.
-     */
-    fun obtenerID(): Int {
-        return id
-    }
-
-    /**
-     * Función que devuelve el título del libro.
-     */
-    fun obtenerTitulo(): String {
-        return titulo
     }
 
     /**
