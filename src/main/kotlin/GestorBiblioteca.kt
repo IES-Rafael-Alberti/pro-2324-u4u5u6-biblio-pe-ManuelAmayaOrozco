@@ -1,7 +1,7 @@
 /**
  * Clase principal donde se gestiona toda la biblioteca.
  */
-class GestorBiblioteca {
+class GestorBiblioteca() {
 
     companion object {
         const val NUMERO_ANIO_MAXIMO = 2024 //El año actual permitido al crear libros.
@@ -11,7 +11,7 @@ class GestorBiblioteca {
 
     val usuarios = mutableListOf<Usuario>() //Lista de todos los usuarios de la biblioteca.
 
-    val registroPrestamos = RegistroPrestamos() //Registro de todos los préstamos.
+    val registroPrestamos = RegistroPrestamos()
 
     /**
      * Función que construye un libro desde cero, creado por el usuario, y
@@ -99,8 +99,8 @@ class GestorBiblioteca {
      *
      * @param libro El libro que será examinado.
      */
-    fun libroDisponible(libro: Libro): Boolean {
-        return libro in catalogo && libro.obtenerEstado() == EstadoLibro.DISPONIBLE
+    fun libroDisponible(elemento: ElementoBiblioteca): Boolean {
+        return elemento in catalogo && elemento.obtenerEstado() == EstadoLibro.DISPONIBLE
     }
 
     /**
@@ -169,7 +169,7 @@ class GestorBiblioteca {
         }
     }
 
-    inner class RegistroPrestamos {
+    inner class RegistroPrestamos: IGestorPrestamos {
 
         private var numPrestamos = 1 //Contador que sube cada vez que se añade un préstamo al registro.
 
@@ -182,10 +182,10 @@ class GestorBiblioteca {
          *
          * @param libro El libro que será prestado.
          */
-        fun prestarLibro(usuario: Usuario, libro: Libro) {
-            if (libroDisponible(libro)) {
-                val pos = catalogo.indexOf(libro)
-                catalogo[pos].actualizarEstado(EstadoLibro.PRESTADO)
+        override fun prestarLibro(usuario: Usuario, elemento: ElementoBiblioteca) {
+            if (libroDisponible(elemento)) {
+                val pos = catalogo.indexOf(elemento)
+                catalogo[pos].prestar()
                 println("El Libro ${libro.obtenerTitulo()} ha sido prestado con éxito.")
                 registroPrestamosLibros[libro]?.add("$numPrestamos ${libro.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")
                 usuario.actualizarNumPrestados()
@@ -202,7 +202,7 @@ class GestorBiblioteca {
          *
          * @param libro El libro que será devuelto.
          */
-        fun devolverLibro(libro: Libro) {
+        override fun devolverLibro(libro: Libro) {
             if (!libroDisponible(libro)) {
                 val pos = catalogo.indexOf(libro)
                 catalogo[pos].actualizarEstado(EstadoLibro.DISPONIBLE)
@@ -213,7 +213,7 @@ class GestorBiblioteca {
             }
         }
 
-        fun consultarHistorial(libro: Libro) {
+        override fun consultarHistorial(libro: Libro) {
             val historial = registroPrestamosLibros[libro]
             if (historial != null) {
                 for (reg in historial) {
@@ -222,7 +222,7 @@ class GestorBiblioteca {
             }
         }
 
-        fun consultarHistorial(usuario: Usuario) {
+        override fun consultarHistorial(usuario: Usuario) {
             val historial = registroPrestamosUsuarios[usuario]
             if (historial != null) {
                 for (reg in historial) {
