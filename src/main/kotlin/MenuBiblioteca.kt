@@ -1,3 +1,7 @@
+/**
+ * Clase utilizada para proveer al usuario de un menú con el que poder utilizar las diferentes
+ * funciones del sistema de la biblioteca.
+ */
 class MenuBiblioteca {
 
     fun accederBiblioteca(gestorBiblioteca: GestorBiblioteca) {

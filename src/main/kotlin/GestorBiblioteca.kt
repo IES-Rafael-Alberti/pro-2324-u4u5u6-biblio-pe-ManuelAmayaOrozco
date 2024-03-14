@@ -1,18 +1,31 @@
+/**
+ * Clase principal donde se gestiona toda la biblioteca.
+ */
 class GestorBiblioteca {
 
     companion object {
-        var numPrestamos = 1
+        var numPrestamos = 1 //Contador que sube cada vez que se añade un préstamo al registro.
     }
 
-    val catalogo = mutableListOf<Libro>()
+    val catalogo = mutableListOf<Libro>() //Catálogo de todos los libros.
 
-    private val registroPrestamos = mutableListOf<String>()
+    private val registroPrestamos = mutableListOf<String>() //Registro de todos los préstamos.
 
+    /**
+     * Función que agrega un libro al catálogo de la biblioteca.
+     *
+     * @param libro El libro que será añadido al catálogo.
+     */
     fun agregarLibro(libro: Libro) {
         catalogo.add(libro)
         println("Libro ${libro.titulo} agregado al catálogo.")
     }
 
+    /**
+     * Función que elimina un libro del catálogo de la biblioteca.
+     *
+     * @param libro El libro que será eliminado del catálogo.
+     */
     fun eliminarLibro(libro: Libro) {
         val result = catalogo.remove(libro)
         if (result) {
@@ -23,19 +36,29 @@ class GestorBiblioteca {
         }
     }
 
+    /**
+     * Función que cambia el estado de un libro a prestado si está disponible.
+     *
+     * @param libro El libro que será prestado.
+     */
     fun prestarLibro(libro: Libro) {
         if (libroDisponible(libro)) {
             val pos = catalogo.indexOf(libro)
             catalogo[pos].estado = EstadoLibro.PRESTADO
             println("El Libro ${libro.titulo} ha sido prestado con éxito.")
-            registroPrestamos.add("$numPrestamos ${libro.titulo} prestado.")
-            numPrestamos++
+            registroPrestamos.add("$numPrestamos ${libro.titulo} prestado.") //Se añade al registro.
+            numPrestamos++ //Sube el número para el préstamo siguiente
         }
         else {
             println("El libro ${libro.titulo} no se encuentra disponible.")
         }
     }
 
+    /**
+     * Función que cambia el estado de un libro a disponible tras haber sido prestado.
+     *
+     * @param libro El libro que será devuelto.
+     */
     fun devolverLibro(libro: Libro) {
         if (!libroDisponible(libro)) {
             val pos = catalogo.indexOf(libro)
@@ -47,10 +70,20 @@ class GestorBiblioteca {
         }
     }
 
+    /**
+     * Función que indica si un libro se encuentra en el catálogo y si está disponible.
+     *
+     * @param libro El libro que será examinado.
+     */
     fun libroDisponible(libro: Libro): Boolean {
         return libro in catalogo && libro.estado == EstadoLibro.DISPONIBLE
     }
 
+    /**
+     * Función que permite el usuario elegir entre si quiere ver todos los libros,
+     * solo los libros disponibles o solo los libros prestados en un simple listado
+     * por pantalla.
+     */
     fun mostrarLibros() {
         println("¿Qué libros quieres que sean mostrados?")
         println("1. TODOS     2. DISPONIBLES      3. PRESTADOS")
