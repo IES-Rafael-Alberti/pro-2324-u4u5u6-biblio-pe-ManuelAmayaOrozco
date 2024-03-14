@@ -8,47 +8,19 @@
  * @param tematica La temática del libro.
  * @param estado El estado del libro, que puede ser disponible o prestado.
  */
-data class Libro(private val titulo: String,
+open class Libro(titulo: String,
                  private val autor: String,
                  private val anioPublicacion: Int,
                  private val tematica: String,
-                 private var estado: EstadoLibro = EstadoLibro.DISPONIBLE) {
+                 estado: EstadoLibro = EstadoLibro.DISPONIBLE): ElementoBiblioteca(titulo, estado),Prestable {
 
-    private var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
+    override var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
 
     /**
      * Función que actualiza el ID del Libro, usado cuando es agregado al sistema biblioteca.
      */
     fun actualizarID(newID: Int) {
         id = newID
-    }
-
-    /**
-     * Función que devuelve el ID actual del libro.
-     */
-    fun obtenerID(): Int {
-        return id
-    }
-
-    /**
-     * Función que devuelve el título del libro.
-     */
-    fun obtenerTitulo(): String {
-        return titulo
-    }
-
-    /**
-     * Función que devuelve el estado del libro.
-     */
-    fun obtenerEstado(): EstadoLibro {
-        return estado
-    }
-
-    /**
-     * Función que actualiza el estado del libro.
-     */
-    fun actualizarEstado(nuevoEstado: EstadoLibro) {
-        estado = nuevoEstado
     }
 
     /**
@@ -59,13 +31,12 @@ data class Libro(private val titulo: String,
     override fun toString(): String {
         return "LIBRO: $titulo (ID: $id - AUTOR: $autor - AÑO DE PUBLICACIÓN: $anioPublicacion - TEMÁTICA: $tematica - ESTADO: $estado)"
     }
-}
 
-/**
- * Clase enumerada que define los dos tipos de estados que puede tener un libro:
- * Disponible o Prestado.
- */
-enum class EstadoLibro(desc: String) {
-    DISPONIBLE("Disponible"),
-    PRESTADO("Prestado")
+    override fun prestar() {
+        estado = EstadoLibro.PRESTADO
+    }
+
+    override fun devolver() {
+        estado = EstadoLibro.DISPONIBLE
+    }
 }
