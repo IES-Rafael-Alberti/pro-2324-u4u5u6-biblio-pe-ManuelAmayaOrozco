@@ -8,19 +8,47 @@
  * @param tematica La temática del libro.
  * @param estado El estado del libro, que puede ser disponible o prestado.
  */
-data class Libro(val titulo: String,
-                 val autor: String,
-                 val anioPublicacion: Int,
-                 val tematica: String,
-                 var estado: EstadoLibro = EstadoLibro.DISPONIBLE) {
+data class Libro(private val titulo: String,
+                 private val autor: String,
+                 private val anioPublicacion: Int,
+                 private val tematica: String,
+                 private var estado: EstadoLibro = EstadoLibro.DISPONIBLE) {
 
-    var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
+    private var id = 0 //Ahora el ID siempre será 0 al principio, hasta que sea agregado a la biblioteca.
 
     /**
      * Función que actualiza el ID del Libro, usado cuando es agregado al sistema biblioteca.
      */
-    fun darID(newID: Int) {
+    fun actualizarID(newID: Int) {
         id = newID
+    }
+
+    /**
+     * Función que devuelve el ID actual del libro.
+     */
+    fun obtenerID(): Int {
+        return id
+    }
+
+    /**
+     * Función que devuelve el título del libro.
+     */
+    fun obtenerTitulo(): String {
+        return titulo
+    }
+
+    /**
+     * Función que devuelve el estado del libro.
+     */
+    fun obtenerEstado(): EstadoLibro {
+        return estado
+    }
+
+    /**
+     * Función que actualiza el estado del libro.
+     */
+    fun actualizarEstado(nuevoEstado: EstadoLibro) {
+        estado = nuevoEstado
     }
 
     /**

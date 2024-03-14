@@ -4,11 +4,17 @@
  */
 class UtilidadesBiblioteca {
     companion object {
-        var id = 0
+        var idLib = 0
+        var idUsu = 0
 
-        fun generarIdentificadorUnico(): Int {
-            id++
-            return id
+        fun generarIdentificadorUnicoLibro(): Int {
+            idLib++
+            return idLib
+        }
+
+        fun generarIdentificadorUnicoUsuario(): Int {
+            idUsu++
+            return idUsu
         }
     }
 }

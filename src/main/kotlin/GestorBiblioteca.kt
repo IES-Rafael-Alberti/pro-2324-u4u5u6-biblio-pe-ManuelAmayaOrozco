@@ -4,20 +4,21 @@
 class GestorBiblioteca {
 
     companion object {
-        var numPrestamos = 1 //Contador que sube cada vez que se añade un préstamo al registro.
         const val NUMERO_ANIO_MAXIMO = 2024 //El año actual permitido al crear libros.
     }
 
     val catalogo = mutableListOf<Libro>() //Catálogo de todos los libros.
 
-    private val registroPrestamos = mutableListOf<String>() //Registro de todos los préstamos.
+    val usuarios = mutableListOf<Usuario>() //Lista de todos los usuarios de la biblioteca.
+
+    val registroPrestamos = RegistroPrestamos() //Registro de todos los préstamos.
 
     /**
      * Función que construye un libro desde cero, creado por el usuario, y
      * después lo agrega al catálogo.
      */
     fun agregarLibro() {
-        val id = UtilidadesBiblioteca.generarIdentificadorUnico() //Creamos un ID para el sistema.
+        val id = UtilidadesBiblioteca.generarIdentificadorUnicoLibro() //Creamos un ID para el sistema.
 
         println("Introduce el título del libro:")
         val titulo = readln()
@@ -38,11 +39,11 @@ class GestorBiblioteca {
         val tema = readln()
 
         val libro = Libro(titulo, autor, anioPublicacion, tema)
-        libro.darID(id) //Actualizamos el ID del libro
+        libro.actualizarID(id) //Actualizamos el ID del libro
 
         catalogo.add(libro)
 
-        println("Libro ${libro.titulo} agregado al catálogo.")
+        println("Libro ${libro.obtenerTitulo()} agregado al catálogo.")
     }
 
     /**
@@ -51,10 +52,31 @@ class GestorBiblioteca {
      * @param libro El libro que será añadido.
      */
     fun agregarLibro(libro: Libro) {
-        val id = UtilidadesBiblioteca.generarIdentificadorUnico() //Creamos un ID para el sistema.
-        libro.darID(id) //Actualizamos el ID del libro.
+        val id = UtilidadesBiblioteca.generarIdentificadorUnicoLibro() //Creamos un ID para el sistema.
+        libro.actualizarID(id) //Actualizamos el ID del libro.
         catalogo.add(libro)
-        println("Libro ${libro.titulo} agregado al catálogo.")
+        println("Libro ${libro.obtenerTitulo()} agregado al catálogo.")
+    }
+
+    fun agregarUsuario() {
+        val id = UtilidadesBiblioteca.generarIdentificadorUnicoUsuario() //Creamos un ID para el sistema.
+
+        println("Introduce el nombre del usuario:")
+        val nombre = readln()
+
+        val usuario = Usuario(nombre)
+        usuario.actualizarID(id) //Actualizamos el ID del usuario
+
+        usuarios.add(usuario)
+
+        println("Usuario ${usuario.obtenerNombre()} agregado al sistema.")
+    }
+
+    fun agregarUsuario(usuario: Usuario) {
+        val id = UtilidadesBiblioteca.generarIdentificadorUnicoUsuario() //Creamos un ID para el sistema.
+        usuario.actualizarID(id) //Actualizamos el ID del usuario
+        usuarios.add(usuario)
+        println("Usuario ${usuario.obtenerNombre()} agregado al sistema.")
     }
 
     /**
@@ -65,44 +87,10 @@ class GestorBiblioteca {
     fun eliminarLibro(libro: Libro) {
         val result = catalogo.remove(libro)
         if (result) {
-            println("Libro ${libro.titulo} eliminado del catálogo.")
+            println("Libro ${libro.obtenerTitulo()} eliminado del catálogo.")
         }
         else {
-            println("Libro ${libro.titulo} no encontrado en el catálogo.")
-        }
-    }
-
-    /**
-     * Función que cambia el estado de un libro a prestado si está disponible.
-     *
-     * @param libro El libro que será prestado.
-     */
-    fun prestarLibro(libro: Libro) {
-        if (libroDisponible(libro)) {
-            val pos = catalogo.indexOf(libro)
-            catalogo[pos].estado = EstadoLibro.PRESTADO
-            println("El Libro ${libro.titulo} ha sido prestado con éxito.")
-            registroPrestamos.add("$numPrestamos ${libro.titulo} prestado.") //Se añade al registro.
-            numPrestamos++ //Sube el número para el préstamo siguiente
-        }
-        else {
-            println("El libro ${libro.titulo} no se encuentra disponible.")
-        }
-    }
-
-    /**
-     * Función que cambia el estado de un libro a disponible tras haber sido prestado.
-     *
-     * @param libro El libro que será devuelto.
-     */
-    fun devolverLibro(libro: Libro) {
-        if (!libroDisponible(libro)) {
-            val pos = catalogo.indexOf(libro)
-            catalogo[pos].estado = EstadoLibro.DISPONIBLE
-            println("El Libro ${libro.titulo} ha sido devuelto con éxito.")
-        }
-        else {
-            println("El libro ${libro.titulo} ya se encuentra disponible.")
+            println("Libro ${libro.obtenerTitulo()} no encontrado en el catálogo.")
         }
     }
 
@@ -112,7 +100,7 @@ class GestorBiblioteca {
      * @param libro El libro que será examinado.
      */
     fun libroDisponible(libro: Libro): Boolean {
-        return libro in catalogo && libro.estado == EstadoLibro.DISPONIBLE
+        return libro in catalogo && libro.obtenerEstado() == EstadoLibro.DISPONIBLE
     }
 
     /**
@@ -145,7 +133,7 @@ class GestorBiblioteca {
             }
 
             2 -> {
-                val catDisponible = catalogo.filter { it.estado == EstadoLibro.DISPONIBLE }
+                val catDisponible = catalogo.filter { it.obtenerEstado() == EstadoLibro.DISPONIBLE }
                 if (catDisponible.isEmpty()) {
                     println("No hay ningún libro disponible actualmente.")
                 }
@@ -157,7 +145,7 @@ class GestorBiblioteca {
             }
 
             3 -> {
-                val catPrestado = catalogo.filter { it.estado == EstadoLibro.PRESTADO }
+                val catPrestado = catalogo.filter { it.obtenerEstado() == EstadoLibro.PRESTADO }
                 if (catPrestado.isEmpty()) {
                     println("No hay ningún libro prestado actualmente.")
                 }
@@ -168,5 +156,80 @@ class GestorBiblioteca {
                 }
             }
         }
+    }
+
+    fun mostrarUsuarios() {
+        if (usuarios.isEmpty()) {
+            println("Aún no hay ningún usuario en el sistema. ¡Intenta crear uno!")
+        }
+        else {
+            for (usuario in usuarios) {
+                println(usuario)
+            }
+        }
+    }
+
+    inner class RegistroPrestamos {
+
+        private var numPrestamos = 1 //Contador que sube cada vez que se añade un préstamo al registro.
+
+        private val registroPrestamosLibros = mutableMapOf<Libro,MutableList<String>>()
+        private val registroPrestamosUsuarios = mutableMapOf<Usuario,MutableList<String>>()
+
+
+        /**
+         * Función que cambia el estado de un libro a prestado si está disponible.
+         *
+         * @param libro El libro que será prestado.
+         */
+        fun prestarLibro(usuario: Usuario, libro: Libro) {
+            if (libroDisponible(libro)) {
+                val pos = catalogo.indexOf(libro)
+                catalogo[pos].actualizarEstado(EstadoLibro.PRESTADO)
+                println("El Libro ${libro.obtenerTitulo()} ha sido prestado con éxito.")
+                registroPrestamosLibros[libro]?.add("$numPrestamos ${libro.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")
+                usuario.actualizarNumPrestados()
+                registroPrestamosUsuarios[usuario]?.add("${usuario.obtenerNumPrestados()} ${libro.obtenerTitulo()} prestado por ${usuario.obtenerNombre()}.")//Se añade al registro.
+                numPrestamos++ //Sube el número para el préstamo siguiente
+            }
+            else {
+                println("El libro ${libro.obtenerTitulo()} no se encuentra disponible.")
+            }
+        }
+
+        /**
+         * Función que cambia el estado de un libro a disponible tras haber sido prestado.
+         *
+         * @param libro El libro que será devuelto.
+         */
+        fun devolverLibro(libro: Libro) {
+            if (!libroDisponible(libro)) {
+                val pos = catalogo.indexOf(libro)
+                catalogo[pos].actualizarEstado(EstadoLibro.DISPONIBLE)
+                println("El Libro ${libro.obtenerTitulo()} ha sido devuelto con éxito.")
+            }
+            else {
+                println("El libro ${libro.obtenerTitulo()} ya se encuentra disponible.")
+            }
+        }
+
+        fun consultarHistorial(libro: Libro) {
+            val historial = registroPrestamosLibros[libro]
+            if (historial != null) {
+                for (reg in historial) {
+                    println(reg)
+                }
+            }
+        }
+
+        fun consultarHistorial(usuario: Usuario) {
+            val historial = registroPrestamosUsuarios[usuario]
+            if (historial != null) {
+                for (reg in historial) {
+                    println(reg)
+                }
+            }
+        }
+
     }
 }
